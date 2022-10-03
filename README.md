@@ -10,7 +10,7 @@
 << [link to demo presentation slides](#) >>
 
 ### Team: RKR 
-#### Roman P, Ryan, Kevin C
+#### Roman P, Kevin C
 
 ***
 

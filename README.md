@@ -1,11 +1,11 @@
 :warning: Everything between << >> needs to be replaced (remove << >> after replacing)
 # CS110 Project Proposal
-# << Project Title >>
+# Arkanoid
 ## CS 110 Final Project
 ### Fall, 2022
 ### [Assignment Description](https://docs.google.com/document/d/1H4R6yLL7som1lglyXWZ04RvTp_RvRFCCBn6sqv-82ps/edit?usp=sharing)
 
-<< [repl](#) >> https://replit.com/join/udspqfxicu-romanpanchmia
+[repl](https://replit.com/join/udspqfxicu-romanpanchmia)
 
 << [link to demo presentation slides](#) >>
 
@@ -16,7 +16,7 @@
 
 ## Project Description
 
-<< Give an overview of your project >>
+A simple recreation of Arkanoid, a block breaker arcade game. Controlling a paddle, the player is tasked with clearing blocks by deflecting a ball towards it without letting the ball hit the bottom edge of the playfield. Some blocks contain power-ups that have various effects, such as increasing the length of the paddle, creating additional balls, or turning the paddle into a laser cannon. Other blocks may be indestructible or require multiple hits to break.
 
 ***    
 
@@ -42,7 +42,39 @@
     * << A simple drawing that shows the class relationships in your code (see below for an example). This does not need to be overly detailed, but should show how your code fits into the Model/View/Controller paradigm. >>
         * ![class diagram](assets/class_diagram.jpg) 
 * Classes
-    * << You should have a list of each of your classes with a description. >>
+```
+class Ball:
+    attributes:
+        x
+        y
+        angle
+        damage
+    methods:
+        bounce()
+        move_foward()
+```
+```
+class Paddle:
+    attributes:
+        x
+        y
+        width
+    methods:
+        change_size()
+        move_right()
+        move_left()
+```
+```
+class Brick:
+    attributes:
+        x
+        y
+        type
+        hp
+    methods:
+        drop_item()
+        take_damage()
+```
 
 ## Project Structure and File List
 

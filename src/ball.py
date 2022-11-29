@@ -3,19 +3,19 @@ import math
 
 
 class Ball(pygame.sprite.Sprite):
-
-    def __init__(self, x, y):
+    def __init__(self):
         """
-        Creates a ball object at x, y
+        Creates a ball object
         args: int x, int y
         """
         super().__init__()
-        self.x = x
-        self.y = y
         self.angle = 0
         self.damage = 1
-        self.image = pygame.image.load()
+        self.image = pygame.image.load("assets/ball.png")
         self.rect = self.image.get_rect()
+    
+    def update(self, x):
+        self.rect.centerx = x
 
     def move_foward(self):
         """

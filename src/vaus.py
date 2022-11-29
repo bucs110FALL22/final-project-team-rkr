@@ -1,19 +1,18 @@
 import pygame
 
 
-class Paddle(pygame.sprite.Sprite):
-
+class Vaus(pygame.sprite.Sprite):
     def __init__(self, x, y, w):
         """
         Creates a paddle at x, y with a width of w
         args: int x, int y, int w
         """
         super().__init__()
-        self.x = x
-        self.y = y
         self.width = w
-        self.image = pygame.image.load()
+        self.image = pygame.image.load("assets/vaus.png")
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
     def change_size(self, w):
         """
@@ -22,14 +21,5 @@ class Paddle(pygame.sprite.Sprite):
         """
         self.width += w
 
-    def move_right(self):
-        """
-        Moves the paddle to the right
-        """
-        self.x += 1
-
-    def move_left(self):
-        """
-        Moves the paddle to the left
-        """
-        self.x -= 1
+    def update(self, x):
+        self.rect.centerx = x

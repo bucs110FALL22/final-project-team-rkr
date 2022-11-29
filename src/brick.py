@@ -2,7 +2,6 @@ import pygame
 
 
 class Brick(pygame.sprite.Sprite):
-
     def __init__(self, x, y, t):
         """
         Creates a brick object at x, y with different variations (hp and items)
@@ -10,12 +9,12 @@ class Brick(pygame.sprite.Sprite):
         """
         super().__init__()
         hp = {0: 1}
-        self.x = x
-        self.y = y
         self.type = t
         self.hp = hp[self.type]
         self.image = pygame.image.load()
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
     def take_damage(self, damage):
         """

@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 
 class Ball(pygame.sprite.Sprite):
@@ -9,7 +10,7 @@ class Ball(pygame.sprite.Sprite):
         args: int x, int y
         """
         super().__init__()
-        self.angle = math.pi / 3
+        self.angle = random.randrange(30, 60) * math.pi / 180
         self.changex = math.cos(self.angle)
         self.changey = math.sin(self.angle)
         self.damage = 1
@@ -19,18 +20,36 @@ class Ball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def follow_mouse(self, x=0):
+        """
+        Updates the x position to the same as the mouse x
+        args: int x
+        """
         self.rect.centerx = x
         self.x = x
         self.y = self.rect.centery
 
     def update(self):
+        """
+        Updates x and y and mirrors the rect values accordingly since rect
+        only allows for integer values
+        """
         self.x += self.changex
         self.rect.centerx = self.x
         self.y -= self.changey
         self.rect.centery = self.y
 
     def bounce(self, direction):
+        """
+        Changes the direction of the ball based on the side of collision
+        args: int direction
+        """
         if direction == 0:
             self.changey *= -1
         elif direction == 1:
             self.changex *= - 1
+
+    def damages(self):
+        """
+        Returns the damage of the ball so other programs can read it
+        """
+        return self.damage

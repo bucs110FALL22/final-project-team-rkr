@@ -22,6 +22,12 @@ class Brick(pygame.sprite.Sprite):
         args: int damage
         """
         self.hp -= damage
+    
+    def update(self):
+        if self.hp > 0:
+            pass
+        else:
+            self.kill()
 
     def drop_item():
         """

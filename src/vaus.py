@@ -22,4 +22,8 @@ class Vaus(pygame.sprite.Sprite):
         self.width += w
 
     def update(self, x):
+        """
+        Updates the x position to the same as the mouse x
+        args: int x
+        """
         self.rect.centerx = x

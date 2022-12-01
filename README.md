@@ -7,15 +7,14 @@
 
 [repl](https://replit.com/join/udspqfxicu-romanpanchmia)
 
-<< [link to demo presentation slides](#) >>
+[slides](https://docs.google.com/presentation/d/1VBqLj7K3Fp3bzePjnTa2nCsM4RtaFZeKUjmoy5pQx8g/edit?usp=sharing)
 
-### Team: RKR 
-#### Roman P, Kevin C
+### Team Name: RKR 
+#### Roman Panchmia and Kevin Cao
 
 ***
 
 ## Project Description
-
 A simple recreation of Arkanoid, a block breaker arcade game. Controlling a paddle, the player is tasked with clearing blocks by deflecting a ball towards it without letting the ball hit the bottom edge of the playfield. Some blocks contain power-ups that have various effects, such as increasing the length of the paddle, creating additional balls, or turning the paddle into a laser cannon. Other blocks may be indestructible or require multiple hits to break.
 
 ***    
@@ -102,6 +101,8 @@ The Project is broken down into the following file structure:
 
 | Step                 |Procedure             |Expected Results                   |
 |----------------------|:--------------------:|----------------------------------:|
-|  1                   | Run Counter Program  |GUI window appears with count = 0  |
-|  2                   | click count button   | display changes to count = 1      |
-etc...
+|  1                   | Open terminal, navigate to folder, and type, “python3 main.py” | Program starts |
+|  2                   | Left Click           | Launches the ball off the paddle into the bricks |
+|  3                   | Mouse Movement       | Whichever horizontal direction you move the mouse, the paddle will follow |
+|  4                   | Click Q key          | Quits Game |
+|  5                   | Click R key          | Restarts Game |

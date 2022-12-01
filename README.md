@@ -1,4 +1,3 @@
-:warning: Everything between << >> needs to be replaced (remove << >> after replacing)
 # CS110 Project Proposal
 # Arkanoid
 ## CS 110 Final Project
@@ -7,7 +6,7 @@
 
 [repl](https://replit.com/join/udspqfxicu-romanpanchmia)
 
-[slides](https://docs.google.com/presentation/d/1VBqLj7K3Fp3bzePjnTa2nCsM4RtaFZeKUjmoy5pQx8g/edit?usp=sharing)
+[Slides](https://docs.google.com/presentation/d/1VBqLj7K3Fp3bzePjnTa2nCsM4RtaFZeKUjmoy5pQx8g/edit?usp=sharing)
 
 ### Team Name: RKR 
 #### Roman Panchmia and Kevin Cao
@@ -44,24 +43,24 @@ A simple recreation of Arkanoid, a block breaker arcade game. Controlling a padd
 ```
 class Ball:
     attributes:
-        x
-        y
-        angle
-        damage
+
     methods:
-        bounce()
-        move_foward()
+        follow_mouse
+        update
+        hit_vaus
+        bounce
+        hit_walls
+        damages
 ```
 ```
-class Paddle:
+class Vaus:
     attributes:
         x
         y
         width
     methods:
-        change_size()
-        move_right()
-        move_left()
+        change_size
+        update
 ```
 ```
 class Brick:
@@ -71,8 +70,10 @@ class Brick:
         type
         hp
     methods:
-        drop_item()
-        take_damage()
+        take_damage
+        get_hp
+        get_type
+        drop_item
 ```
 
 ## Project Structure and File List
@@ -81,21 +82,22 @@ The Project is broken down into the following file structure:
 
 * main.py
 * src
-    * << all of your python files should go here >>
+    * The main classes of the project
 * assets
-    * << all of your media, i.e. images, font files, etc, should go here) >>
+    * Images for each of the project classes
 * etc
-    * << This is a catch all folder for things that are not part of your project, but you want to keep with your project >>
+    * Misc
 
 ***
 
 ## Tasks and Responsibilities 
 
-   * Outline the team member roles and who was responsible for each class/method, both individual and collaborative.
+   * Roman: Worked as the creative designer by helping give ideas for various designs for the visual aspects of the game. Also filled out the ReadMe and Proposal for the project.
+   * Kevin: Front-end worked on the code for each class and tested to make sure it functioned. Used design information given by the design specialist to implement each class and the various code.  
 
 ## Testing
 
-* << Describe your testing strategy for your project. >>
+* Everytime we implemented a new feature, such as the brick, or the paddle, we tested it.
 
 ## ATP
 

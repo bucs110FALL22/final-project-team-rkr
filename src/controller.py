@@ -11,6 +11,8 @@ DISPLAY_HEIGHT = 1024
 class Controller:
     def __init__(self):
         pygame.init()
+        clock = pygame.time.Clock()
+        clock.tick(30)
         self.screen = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
         pygame.display.set_caption("Arkanoid")
         self.setup()
@@ -19,10 +21,13 @@ class Controller:
         while True:
             if not self.start:
                 self.menuloop()
-            elif self.lives > 0:
+            elif self.lives > 0 and self.bricks_left > 0:
                 self.gameloop()
             else:
-                self.gameoverloop()
+                if self.bricks_left == 0:
+                    self.win()
+                else:
+                    self.gameoverloop()
                 self.game_over_events()
         # select state loop
 
@@ -60,10 +65,20 @@ class Controller:
                 if pygame.sprite.collide_rect(brick, ball):
                     ball.bounce(self.x_or_y(brick.rect, ball.rect))
                     brick.take_damage(ball.damages())
+                    if brick.get_hp() <= 0:
+                        self.bricks_left -= 1
+                        brick.kill()
         self.check_boundary()
         self.balls.update()
         self.bricks.update()
         self.redraw()
+
+    def win(self):
+        self.screen.fill("white")
+        font = pygame.font.SysFont(None, 48)
+        text = font.render("You Win!", True, "black")
+        self.screen.blit(text, (DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2))
+        pygame.display.flip()
 
     def gameoverloop(self):
         """
@@ -88,27 +103,38 @@ class Controller:
         """
         levels = [
             [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            ]
+                [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ],
+            [
+                [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+                [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+                [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+                [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+                [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+                [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+            ],
         ]
         board = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ]
+        self.bricks_left = 0
         self.bricks = pygame.sprite.Group()
         for i, row in enumerate(levels[level - 1]):
             for j, b in enumerate(row):
-                board[i][j] = Brick(j * 80 + 24, (i + 1) * 20, b)
-                self.bricks.add(board[i][j])
+                if b != 0:
+                    board[i][j] = Brick(j * 60, (i + 2) * 26, b)
+                    self.bricks.add(board[i][j])
+                    self.bricks_left += 1
 
     def pre_launch(self):
         self.vauses = pygame.sprite.Group()

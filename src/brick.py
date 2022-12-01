@@ -8,7 +8,7 @@ class Brick(pygame.sprite.Sprite):
         args: int x, int y, int t
         """
         super().__init__()
-        hp = {0: 1}
+        hp = {1: 1}
         self.type = t
         self.hp = hp[self.type]
         self.image = pygame.image.load("assets/brick.png")
@@ -22,12 +22,13 @@ class Brick(pygame.sprite.Sprite):
         args: int damage
         """
         self.hp -= damage
-    
+
     def update(self):
         if self.hp > 0:
             pass
-        else:
-            self.kill()
+
+    def get_hp(self):
+        return self.hp
 
     def drop_item():
         """

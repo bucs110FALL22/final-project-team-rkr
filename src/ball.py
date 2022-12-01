@@ -37,23 +37,25 @@ class Ball(pygame.sprite.Sprite):
         self.rect.centerx = self.x
         self.y -= self.changey
         self.rect.centery = self.y
-    
 
-    def change_angle(self):
+    def hit_vaus(self):
         self.angle = random.randrange(30, 60) * math.pi / 180
+        if self.changex < 0:
+            self.angle = (self.angle * -1) + math.pi
         self.changex = math.cos(self.angle)
         self.changey = math.sin(self.angle)
 
+    def bounce(self):
+        """
+        Changes the direction of the ball
+        """
+        self.changey *= -1
 
-    def bounce(self, direction):
-        """
-        Changes the direction of the ball based on the side of collision
-        args: int direction
-        """
-        if direction == 0:
+    def hit_walls(self, direction):
+        if direction == "topbottom":
             self.changey *= -1
-        elif direction == 1:
-            self.changex *= - 1
+        elif direction == "leftright":
+            self.changex *= -1
 
     def damages(self):
         """

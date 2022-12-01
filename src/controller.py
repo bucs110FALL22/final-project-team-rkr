@@ -59,7 +59,7 @@ class Controller:
         self.events()  # checks for events
         for ball in self.balls:  # bounces from vauses
             if pygame.sprite.spritecollideany(ball, self.vauses):
-                ball.bounce(0)
+                ball.change_angle()
         for brick in self.bricks:  # break bricks
             for ball in self.balls:
                 if pygame.sprite.collide_rect(brick, ball):
@@ -67,6 +67,7 @@ class Controller:
                     brick.take_damage(ball.damages())
                     if brick.get_hp() <= 0:
                         self.bricks_left -= 1
+                        self.score += 100
                         brick.kill()
         self.check_boundary()
         self.balls.update()
@@ -84,7 +85,7 @@ class Controller:
         """
         Game over loop and displays 'Game Over'
         """
-        self.screen.fill("black")
+        self.screen.fill("red")
         font = pygame.font.SysFont(None, 48)
         text = font.render("Game Over", True, "white")
         self.screen.blit(text, (DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2))
@@ -94,6 +95,8 @@ class Controller:
         self.start = False
         self.lives = 3
         self.level = 1
+        self.score = 0
+        self.bg = pygame.image.load("assets/background.png")
         self.board_setup(self.level)
         self.pre_launch()
 
@@ -129,7 +132,7 @@ class Controller:
         ]
         self.bricks_left = 0
         self.bricks = pygame.sprite.Group()
-        for i, row in enumerate(levels[level - 1]):
+        for i, row in enumerate(levels[level]):
             for j, b in enumerate(row):
                 if b != 0:
                     board[i][j] = Brick(j * 60, (i + 2) * 26, b)
@@ -179,8 +182,9 @@ class Controller:
             if ball.rect.bottom >= DISPLAY_HEIGHT:
                 ball.kill()
                 self.lives -= 1
-                self.start = False
-                self.pre_launch()
+                if self.lives > 0:
+                    self.start = False
+                    self.pre_launch()
             elif ball.rect.top <= 0:
                 ball.bounce(0)
             elif ball.rect.left <= 0 or ball.rect.right >= DISPLAY_WIDTH:
@@ -199,13 +203,25 @@ class Controller:
             return 0
         else:
             return 1
+    
+    def show_score(self):
+        font = pygame.font.SysFont(None, 48)
+        text = font.render(f"Score: {self.score}", True, "white")
+        self.screen.blit(text, (0, 0))
+    
+    def show_lives(self):
+        font = pygame.font.SysFont(None, 48)
+        text = font.render(f"Lives: {self.lives}", True, "white")
+        self.screen.blit(text, (0, DISPLAY_HEIGHT - 48))
 
     def redraw(self):
         """
         Redraws all updates to the game
         """
-        self.screen.fill("white")
+        self.screen.blit(self.bg, (0, 0))
         self.vauses.draw(self.screen)
         self.balls.draw(self.screen)
         self.bricks.draw(self.screen)
+        self.show_score()
+        self.show_lives()
         pygame.display.flip()

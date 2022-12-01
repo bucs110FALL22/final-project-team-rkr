@@ -37,6 +37,13 @@ class Ball(pygame.sprite.Sprite):
         self.rect.centerx = self.x
         self.y -= self.changey
         self.rect.centery = self.y
+    
+
+    def change_angle(self):
+        self.angle = random.randrange(30, 60) * math.pi / 180
+        self.changex = math.cos(self.angle)
+        self.changey = math.sin(self.angle)
+
 
     def bounce(self, direction):
         """

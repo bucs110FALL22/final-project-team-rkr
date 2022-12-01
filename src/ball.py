@@ -10,9 +10,10 @@ class Ball(pygame.sprite.Sprite):
         args: int x, int y
         """
         super().__init__()
+        self.speed = 3
         self.angle = random.randrange(30, 60) * math.pi / 180
-        self.changex = math.cos(self.angle)
-        self.changey = math.sin(self.angle)
+        self.changex = math.cos(self.angle) * self.speed
+        self.changey = math.sin(self.angle) * self.speed
         self.damage = 1
         self.x = 0
         self.y = 0
@@ -42,8 +43,8 @@ class Ball(pygame.sprite.Sprite):
         self.angle = random.randrange(30, 60) * math.pi / 180
         if self.changex < 0:
             self.angle = (self.angle * -1) + math.pi
-        self.changex = math.cos(self.angle)
-        self.changey = math.sin(self.angle)
+        self.changex = math.cos(self.angle) * self.speed
+        self.changey = math.sin(self.angle) * self.speed
 
     def bounce(self):
         """

@@ -195,7 +195,7 @@ class Controller:
 
     def pre_launch(self):
         self.vauses = pygame.sprite.Group()
-        self.vaus = Vaus(0, DISPLAY_HEIGHT - 100, 10)
+        self.vaus = Vaus(0, DISPLAY_HEIGHT - 100)
         self.vaus.rect.centerx = DISPLAY_WIDTH // 2
         self.vauses.add(self.vaus)
         self.balls = pygame.sprite.Group()

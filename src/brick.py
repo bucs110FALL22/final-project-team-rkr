@@ -8,7 +8,7 @@ class Brick(pygame.sprite.Sprite):
         args: int x, int y, int t
         """
         super().__init__()
-        hp = {1: 1, 2:1, 3:1, 4:1, 5:1, 6:1, 7:1, 8:1, 9:1, 10: -1}
+        hp = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: -1}
         self.type = t
         self.hp = hp[self.type]
         self.image = pygame.image.load(f"assets/brick{t}.png")
@@ -24,13 +24,15 @@ class Brick(pygame.sprite.Sprite):
         self.hp -= damage
 
     def get_hp(self):
+        """
+        Returns hp left
+        return: int hp
+        """
         return self.hp
-    
-    def get_type(self):
-        return self.type
 
-    def drop_item():
+    def get_type(self):
         """
-        Creates an item object which drops downwards from the brick
+        Returns the brick type
+        return: int type
         """
-        return
+        return self.type

@@ -16,6 +16,16 @@ LEVELS = [
         [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
     ],
     [
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+    ],
+    [
         [0, 6, 6, 6, 0, 6, 6, 6, 0, 6, 6, 6, 0],
         [0, 5, 5, 5, 0, 5, 5, 5, 0, 5, 5, 5, 0],
         [0, 4, 4, 4, 0, 4, 4, 4, 0, 4, 4, 4, 0],
@@ -35,6 +45,18 @@ LEVELS = [
         [0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    ],
+    [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 4, 4, 4, 0, 0, 6, 0, 0, 5, 5, 5, 0],
+        [0, 4, 4, 4, 0, 0, 0, 0, 0, 5, 5, 5, 0],
+        [0, 4, 4, 4, 0, 0, 0, 0, 0, 5, 5, 5, 0],
+        [0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0],
+        [0, 0, 6, 0, 0, 3, 3, 3, 0, 0, 6, 0, 0],
+        [0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0],
+        [0, 1, 1, 1, 0, 0, 0, 0, 0, 2, 2, 2, 0],
+        [0, 1, 1, 1, 0, 0, 6, 0, 0, 2, 2, 2, 0],
+        [0, 1, 1, 1, 0, 0, 0, 0, 0, 2, 2, 2, 0],
     ],
 ]
 
@@ -70,8 +92,6 @@ class Controller:
                 self.game_over_events()
         # select state loop
 
-    ### below are some sample loop states ###
-
     def menuloop(self):
         self.menu_events()
         # update data
@@ -87,7 +107,7 @@ class Controller:
             if pygame.sprite.spritecollideany(ball, self.vauses):
                 ball.hit_vaus()
         self.break_bricks()
-        if self.level != 2 and self.bricks_left == 0:
+        if self.level != 4 and self.bricks_left == 0:
             self.next_level()
         self.balls.update()
         self.redraw()
@@ -96,16 +116,18 @@ class Controller:
         """
         Win loop and displays 'You Win'
         """
-        self.screen.fill("white")
+        self.screen.fill("green")
+        big_font = pygame.font.SysFont(None, 96)
         font = pygame.font.SysFont(None, 48)
-        text = font.render("You Win!", True, "black")
-        text_rect = text.get_rect(center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2))
+        text = big_font.render("You Win!", True, "black")
+        text_rect = text.get_rect(center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 - 96))
         self.screen.blit(text, text_rect)
         score = font.render(f"Your score was {self.score}", True, "black")
-        score_rect = text.get_rect(
-            center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 + 50)
+        score_rect = score.get_rect(
+            center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 + 48)
         )
         self.screen.blit(score, score_rect)
+        self.keybinds()
         pygame.display.flip()
 
     def gameoverloop(self):
@@ -113,27 +135,32 @@ class Controller:
         Game over loop and displays 'Game Over'
         """
         self.screen.fill("red")
+        big_font = pygame.font.SysFont(None, 96)
         font = pygame.font.SysFont(None, 48)
-        text = font.render("Game Over", True, "white")
-        text_rect = text.get_rect(center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2))
+        text = big_font.render("Game Over", True, "black")
+        text_rect = text.get_rect(center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 - 96))
         self.screen.blit(text, text_rect)
         score = font.render(f"Your score was {self.score}", True, "black")
-        score_rect = text.get_rect(
-            center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 + 50)
+        score_rect = score.get_rect(
+            center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 + 48)
         )
         self.screen.blit(score, score_rect)
-        high_score = font.render(f"Your high score was {self.high_score}", True, "black")
-        high_score_rect = text.get_rect(
-            center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 + 100)
+        high_score = font.render(
+            f"Your high score was {self.high_score}", True, "black"
+        )
+        high_score_rect = high_score.get_rect(
+            center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 + 96)
         )
         self.screen.blit(high_score, high_score_rect)
+        self.keybinds()
         pygame.display.flip()
 
     def setup(self):
         self.start = False
         self.lives = 3
-        self.level = 0
+        self.level = 1
         self.score = 0
+        self.speed = 2
         self.bg = pygame.image.load("assets/background.png")
         self.board_setup(self.level)
         self.pre_launch()
@@ -172,12 +199,14 @@ class Controller:
         self.vaus.rect.centerx = DISPLAY_WIDTH // 2
         self.vauses.add(self.vaus)
         self.balls = pygame.sprite.Group()
-        ball = Ball()
+        ball = Ball(self.speed)
         ball.rect.bottom = self.vaus.rect.top
+        ball.follow_mouse(DISPLAY_WIDTH // 2)
         self.balls.add(ball)
 
     def next_level(self):
         self.level += 1
+        self.speed_up()
         self.start = False
         self.board_setup(self.level)
         self.pre_launch()
@@ -259,6 +288,38 @@ class Controller:
                 ball.hit_walls("topbottom")
             elif ball.rect.left <= 0 or ball.rect.right >= DISPLAY_WIDTH:
                 ball.hit_walls("leftright")
+    
+    def speed_up(self):
+        self.speed *= 1.2
+
+    def instructions(self):
+        """
+        Displays instructions on how to start
+        """
+        font = pygame.font.SysFont(None, 48)
+        start = font.render("Left Click to Start", True, "white")
+        start_rect = start.get_rect(center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2))
+        self.screen.blit(start, start_rect)
+
+    def keybinds(self):
+        """
+        Displays keybinds on the bottom of the screen
+        """
+        font = pygame.font.SysFont(None, 36)
+        restart = font.render("Press R to Restart", True, "white")
+        restart_rect = restart.get_rect(left=0, bottom=(DISPLAY_HEIGHT))
+        self.screen.blit(restart, restart_rect)
+        quit = font.render("Press Q to Quit", True, "white")
+        quit_rect = quit.get_rect(right=DISPLAY_WIDTH, bottom=(DISPLAY_HEIGHT))
+        self.screen.blit(quit, quit_rect)
+
+    def show_level(self):
+        """
+        Displays the level
+        """
+        font = pygame.font.SysFont(None, 48)
+        text = font.render(f"Level: {self.level}/4", True, "white")
+        self.screen.blit(text, (0, 0))
 
     def show_score(self):
         """
@@ -266,7 +327,8 @@ class Controller:
         """
         font = pygame.font.SysFont(None, 48)
         text = font.render(f"Score: {self.score}", True, "white")
-        self.screen.blit(text, (0, 0))
+        text_rect = text.get_rect(center=(DISPLAY_WIDTH // 2, 24))
+        self.screen.blit(text, text_rect)
 
     def show_lives(self):
         """
@@ -274,7 +336,8 @@ class Controller:
         """
         font = pygame.font.SysFont(None, 48)
         text = font.render(f"Lives: {self.lives}", True, "white")
-        self.screen.blit(text, (0, DISPLAY_HEIGHT - 48))
+        text_rect = text.get_rect(right=DISPLAY_WIDTH)
+        self.screen.blit(text, text_rect)
 
     def redraw(self):
         """
@@ -284,6 +347,10 @@ class Controller:
         self.vauses.draw(self.screen)
         self.balls.draw(self.screen)
         self.bricks.draw(self.screen)
+        if self.start == False:
+            self.instructions()
         self.show_score()
         self.show_lives()
+        self.show_level()
+        self.keybinds()
         pygame.display.flip()

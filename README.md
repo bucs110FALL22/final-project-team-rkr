@@ -43,7 +43,15 @@ A simple recreation of Arkanoid, a block breaker arcade game. Controlling a padd
 ```
 class Ball:
     attributes:
-
+        speed
+        angle
+        changex
+        changey
+        damage
+        x
+        y
+        image
+        rect
     methods:
         follow_mouse
         update
@@ -55,9 +63,11 @@ class Ball:
 ```
 class Vaus:
     attributes:
-        x
-        y
         width
+        image
+        rect
+        rect.x
+        rect.y
     methods:
         change_size
         update
@@ -65,10 +75,12 @@ class Vaus:
 ```
 class Brick:
     attributes:
-        x
-        y
         type
         hp
+        image
+        rect
+        rect.x
+        rect.y
     methods:
         take_damage
         get_hp

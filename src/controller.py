@@ -2,7 +2,7 @@ import pygame
 from src.ball import Ball
 from src.brick import Brick
 from src.vaus import Vaus
-
+from src.gui import GUI
 
 DISPLAY_WIDTH = 793
 DISPLAY_HEIGHT = 1024
@@ -66,14 +66,15 @@ class Controller:
         pygame.init()
         clock = pygame.time.Clock()
         clock.tick(30)
-        self.screen = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
         pygame.display.set_caption("Arkanoid")
         pygame.mouse.set_visible(False)
-        with open("high_score.txt") as f:
-            self.high_score = int(f.readline())
+        self.gui = GUI()
         self.setup()
 
     def mainloop(self):
+        """
+        Loop to create each frame of game
+        """
         while True:
             if not self.start:
                 self.menuloop()
@@ -86,24 +87,25 @@ class Controller:
                     f.write(str(self.high_score))
                     f.close()
                 if self.bricks_left == 0:
-                    self.win()
+                    self.gui.win_screen(self.score)
                 else:
-                    self.gameoverloop()
+                    self.gui.lose_screen(self.score, self.high_score)
                 self.game_over_events()
-        # select state loop
 
     def menuloop(self):
+        """
+        Menu / Start loop
+        """
         self.menu_events()
-        # update data
         self.redraw()
 
     def gameloop(self):
         """
         Main game loop
         """
-        self.game_events()  # checks for events
+        self.game_events()
         self.check_boundary()
-        for ball in self.balls:  # bounces from vauses
+        for ball in self.balls:
             if pygame.sprite.spritecollideany(ball, self.vauses):
                 ball.hit_vaus()
         self.break_bricks()
@@ -112,62 +114,24 @@ class Controller:
         self.balls.update()
         self.redraw()
 
-    def win(self):
-        """
-        Win loop and displays 'You Win'
-        """
-        self.screen.fill("green")
-        big_font = pygame.font.SysFont(None, 96)
-        font = pygame.font.SysFont(None, 48)
-        text = big_font.render("You Win!", True, "black")
-        text_rect = text.get_rect(center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 - 96))
-        self.screen.blit(text, text_rect)
-        score = font.render(f"Your score was {self.score}", True, "black")
-        score_rect = score.get_rect(
-            center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 + 48)
-        )
-        self.screen.blit(score, score_rect)
-        self.keybinds()
-        pygame.display.flip()
-
-    def gameoverloop(self):
-        """
-        Game over loop and displays 'Game Over'
-        """
-        self.screen.fill("red")
-        big_font = pygame.font.SysFont(None, 96)
-        font = pygame.font.SysFont(None, 48)
-        text = big_font.render("Game Over", True, "black")
-        text_rect = text.get_rect(center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 - 96))
-        self.screen.blit(text, text_rect)
-        score = font.render(f"Your score was {self.score}", True, "black")
-        score_rect = score.get_rect(
-            center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 + 48)
-        )
-        self.screen.blit(score, score_rect)
-        high_score = font.render(
-            f"Your high score was {self.high_score}", True, "black"
-        )
-        high_score_rect = high_score.get_rect(
-            center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2 + 96)
-        )
-        self.screen.blit(high_score, high_score_rect)
-        self.keybinds()
-        pygame.display.flip()
-
     def setup(self):
+        """
+        Setup the game
+        """
         self.start = False
         self.lives = 3
         self.level = 1
-        self.score = 0
         self.speed = 2
-        self.bg = pygame.image.load("assets/background.png")
+        self.score = 0
+        with open("high_score.txt") as f:
+            self.high_score = int(f.readline())
         self.board_setup(self.level)
         self.pre_launch()
 
-    def board_setup(self, level):
+    def board_setup(self, l):
         """
-        Creates the initial board
+        Creates bricks according to the current level
+        args: level
         """
         board = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -186,7 +150,7 @@ class Controller:
         ]
         self.bricks_left = 0
         self.bricks = pygame.sprite.Group()
-        for i, row in enumerate(LEVELS[level]):
+        for i, row in enumerate(LEVELS[l]):
             for j, b in enumerate(row):
                 if b != 0:
                     board[i][j] = Brick(j * 61, (i + 2) * 31, b)
@@ -194,6 +158,9 @@ class Controller:
                     self.bricks_left += 1
 
     def pre_launch(self):
+        """
+        Create the vaus and balls
+        """
         self.vauses = pygame.sprite.Group()
         self.vaus = Vaus(0, DISPLAY_HEIGHT - 100)
         self.vaus.rect.centerx = DISPLAY_WIDTH // 2
@@ -205,6 +172,9 @@ class Controller:
         self.balls.add(ball)
 
     def next_level(self):
+        """
+        Setup the next level
+        """
         self.level += 1
         self.speed_up()
         self.start = False
@@ -212,6 +182,9 @@ class Controller:
         self.pre_launch()
 
     def menu_events(self):
+        """
+        Checks for any events(input) during the menu phase
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 raise SystemExit
@@ -230,24 +203,22 @@ class Controller:
 
     def game_events(self):
         """
-        Checks for any events during the main game phase
+        Checks for any events(input) during the main game phase
         """
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:  # close the game
+            if event.type == pygame.QUIT:
                 raise SystemExit
-            elif event.type == pygame.KEYDOWN:  # close the game
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     raise SystemExit
                 elif event.key == pygame.K_r:
                     self.setup()
-            elif (
-                event.type == pygame.MOUSEMOTION
-            ):  # change position of vauses depending on mouse location
+            elif event.type == pygame.MOUSEMOTION:
                 self.vauses.update(event.pos[0])
 
     def game_over_events(self):
         """
-        Checks for any events during the game over phase
+        Checks for any events(input) during the game over phase
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -259,6 +230,10 @@ class Controller:
                     self.setup()
 
     def break_bricks(self):
+        """
+        Check for brick and ball collision
+        Destory brick and make ball bounce if it has no hp
+        """
         if pygame.sprite.groupcollide(
             self.bricks, self.balls, False, False
         ):  # break bricks
@@ -274,8 +249,7 @@ class Controller:
 
     def check_boundary(self):
         """
-        Determine if ball touches the edges of the window and change direction
-        accordingly
+        Determine if ball touches the edges of the window and change direction accordingly
         """
         for ball in self.balls:
             if ball.rect.bottom >= DISPLAY_HEIGHT:
@@ -288,69 +262,25 @@ class Controller:
                 ball.hit_walls("topbottom")
             elif ball.rect.left <= 0 or ball.rect.right >= DISPLAY_WIDTH:
                 ball.hit_walls("leftright")
-    
+
     def speed_up(self):
+        """
+        Speeds up the ball speed
+        """
         self.speed *= 1.2
-
-    def instructions(self):
-        """
-        Displays instructions on how to start
-        """
-        font = pygame.font.SysFont(None, 48)
-        start = font.render("Left Click to Start", True, "white")
-        start_rect = start.get_rect(center=(DISPLAY_WIDTH // 2, DISPLAY_HEIGHT // 2))
-        self.screen.blit(start, start_rect)
-
-    def keybinds(self):
-        """
-        Displays keybinds on the bottom of the screen
-        """
-        font = pygame.font.SysFont(None, 36)
-        restart = font.render("Press R to Restart", True, "white")
-        restart_rect = restart.get_rect(left=0, bottom=(DISPLAY_HEIGHT))
-        self.screen.blit(restart, restart_rect)
-        quit = font.render("Press Q to Quit", True, "white")
-        quit_rect = quit.get_rect(right=DISPLAY_WIDTH, bottom=(DISPLAY_HEIGHT))
-        self.screen.blit(quit, quit_rect)
-
-    def show_level(self):
-        """
-        Displays the level
-        """
-        font = pygame.font.SysFont(None, 48)
-        text = font.render(f"Level: {self.level}/4", True, "white")
-        self.screen.blit(text, (0, 0))
-
-    def show_score(self):
-        """
-        Displays the score
-        """
-        font = pygame.font.SysFont(None, 48)
-        text = font.render(f"Score: {self.score}", True, "white")
-        text_rect = text.get_rect(center=(DISPLAY_WIDTH // 2, 24))
-        self.screen.blit(text, text_rect)
-
-    def show_lives(self):
-        """
-        Displays lives left
-        """
-        font = pygame.font.SysFont(None, 48)
-        text = font.render(f"Lives: {self.lives}", True, "white")
-        text_rect = text.get_rect(right=DISPLAY_WIDTH)
-        self.screen.blit(text, text_rect)
 
     def redraw(self):
         """
         Redraws all updates to the game
         """
-        self.screen.blit(self.bg, (0, 0))
-        self.vauses.draw(self.screen)
-        self.balls.draw(self.screen)
-        self.bricks.draw(self.screen)
+        self.gui.draw_background()
+        self.gui.draw_vauses(self.vauses)
+        self.gui.draw_balls(self.balls)
+        self.gui.draw_bricks(self.bricks)
         if self.start == False:
-            self.instructions()
-        self.show_score()
-        self.show_lives()
-        self.show_level()
-        self.keybinds()
+            self.gui.instructions()
+        self.gui.draw_score(self.score)
+        self.gui.draw_lives(self.lives)
+        self.gui.draw_level(self.level)
+        self.gui.keybinds()
         pygame.display.flip()

@@ -127,3 +127,9 @@ class GUI:
         self.screen.blit(high_score, high_score_rect)
         self.keybinds()
         pygame.display.flip()
+
+    def get_dimensions(self):
+        """
+        Returns the dimensions of the window
+        """
+        return (DISPLAY_WIDTH, DISPLAY_HEIGHT)

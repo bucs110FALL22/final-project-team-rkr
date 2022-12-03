@@ -4,17 +4,7 @@ from src.brick import Brick
 from src.vaus import Vaus
 from src.gui import GUI
 
-DISPLAY_WIDTH = 793
-DISPLAY_HEIGHT = 1024
-
 LEVELS = [
-    [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    ],
     [
         [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
         [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
@@ -63,23 +53,27 @@ LEVELS = [
 
 class Controller:
     def __init__(self):
+        """
+        Creates the controller class and starts pygame
+        """
         pygame.init()
         clock = pygame.time.Clock()
         clock.tick(30)
         pygame.display.set_caption("Arkanoid")
         pygame.mouse.set_visible(False)
         self.gui = GUI()
+        self.width, self.height = self.gui.get_dimensions()
         self.setup()
 
-    def mainloop(self):
+    def main_loop(self):
         """
         Loop to create each frame of game
         """
         while True:
             if not self.start:
-                self.menuloop()
+                self.menu_loop()
             elif self.lives > 0 and self.bricks_left > 0:
-                self.gameloop()
+                self.game_loop()
             else:
                 if self.score > self.high_score:
                     self.high_score = self.score
@@ -92,14 +86,14 @@ class Controller:
                     self.gui.lose_screen(self.score, self.high_score)
                 self.game_over_events()
 
-    def menuloop(self):
+    def menu_loop(self):
         """
         Menu / Start loop
         """
         self.menu_events()
         self.redraw()
 
-    def gameloop(self):
+    def game_loop(self):
         """
         Main game loop
         """
@@ -125,7 +119,7 @@ class Controller:
         self.score = 0
         with open("high_score.txt") as f:
             self.high_score = int(f.readline())
-        self.board_setup(self.level)
+        self.board_setup(self.level - 1)
         self.pre_launch()
 
     def board_setup(self, l):
@@ -133,28 +127,12 @@ class Controller:
         Creates bricks according to the current level
         args: level
         """
-        board = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ]
         self.bricks_left = 0
         self.bricks = pygame.sprite.Group()
         for i, row in enumerate(LEVELS[l]):
             for j, b in enumerate(row):
                 if b != 0:
-                    board[i][j] = Brick(j * 61, (i + 2) * 31, b)
-                    self.bricks.add(board[i][j])
+                    self.bricks.add(Brick(j * 61, (i + 2) * 31, b))
                     self.bricks_left += 1
 
     def pre_launch(self):
@@ -162,13 +140,13 @@ class Controller:
         Create the vaus and balls
         """
         self.vauses = pygame.sprite.Group()
-        self.vaus = Vaus(0, DISPLAY_HEIGHT - 100)
-        self.vaus.rect.centerx = DISPLAY_WIDTH // 2
+        self.vaus = Vaus(0, self.height - 100)
+        self.vaus.rect.centerx = self.width // 2
         self.vauses.add(self.vaus)
         self.balls = pygame.sprite.Group()
         ball = Ball(self.speed)
         ball.rect.bottom = self.vaus.rect.top
-        ball.follow_mouse(DISPLAY_WIDTH // 2)
+        ball.follow_mouse(self.width // 2)
         self.balls.add(ball)
 
     def next_level(self):
@@ -252,7 +230,7 @@ class Controller:
         Determine if ball touches the edges of the window and change direction accordingly
         """
         for ball in self.balls:
-            if ball.rect.bottom >= DISPLAY_HEIGHT:
+            if ball.rect.bottom >= self.height:
                 ball.kill()
                 self.lives -= 1
                 if self.lives > 0:
@@ -260,7 +238,7 @@ class Controller:
                     self.pre_launch()
             elif ball.rect.top <= 0:
                 ball.hit_walls("topbottom")
-            elif ball.rect.left <= 0 or ball.rect.right >= DISPLAY_WIDTH:
+            elif ball.rect.left <= 0 or ball.rect.right >= self.width:
                 ball.hit_walls("leftright")
 
     def speed_up(self):
